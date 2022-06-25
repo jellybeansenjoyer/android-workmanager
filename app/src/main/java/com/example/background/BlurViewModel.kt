@@ -28,6 +28,8 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.background.workers.BlurWorker
+import com.example.background.workers.CleanUpWorker
+import com.example.background.workers.SavingWorker
 
 
 class BlurViewModel(application: Application) : ViewModel() {
@@ -43,8 +45,10 @@ class BlurViewModel(application: Application) : ViewModel() {
      * @param blurLevel The amount to blur the image
      */
     internal fun applyBlur(blurLevel: Int) {
-        val blurRequest = OneTimeWorkRequestBuilder<BlurWorker>().setInputData(createInputDataFromUri()).build()
-        workManager.enqueue(blurRequest)
+        val continuation = workManager.beginWith(OneTimeWorkRequest.from(CleanUpWorker::class.java))
+        val workRequest = OneTimeWorkRequestBuilder<BlurWorker>().setInputData(createInputDataFromUri()).build()
+        val save = OneTimeWorkRequest.Builder(SavingWorker::class.java).build()
+        continuation.then(workRequest).then(save).enqueue()
     }
     private fun uriOrNull(uriString: String?): Uri? {
         return if (!uriString.isNullOrEmpty()) {
