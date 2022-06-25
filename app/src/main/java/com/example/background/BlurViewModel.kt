@@ -68,7 +68,7 @@ class BlurViewModel(application: Application) : ViewModel() {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return if (modelClass.isAssignableFrom(BlurViewModel::class.java)) {
                 BlurViewModel(application) as T
-            } else {
+            } else {z
                 throw IllegalArgumentException("Unknown ViewModel class")
             }
         }

@@ -157,8 +157,8 @@ fun writeBitmapToFile(applicationContext: Context, bitmap: Bitmap): Uri {
             try {
                 it.close()
             } catch (ignore: IOException) {
-            }
 
+            }
         }
     }
     return Uri.fromFile(outputFile)
