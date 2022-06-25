@@ -6,6 +6,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.example.background.KEY_IMAGE_URI
 import com.example.background.R
 import java.lang.Exception
@@ -30,6 +31,7 @@ class BlurWorker(private val context: Context,
             val uri = writeBitmapToFile(context,output)
 
             makeStatusNotification("Output is $uri",context)
+            val outputData = workDataOf(KEY_IMAGE_URI to uri.toString())
             return Result.success()
         }catch (throwable:Throwable){
             Log.e(TAG,"Error occurred")
