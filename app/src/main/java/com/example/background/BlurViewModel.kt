@@ -20,8 +20,10 @@ import android.app.Application
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
+import android.view.Gravity.apply
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -50,6 +52,11 @@ class BlurViewModel(application: Application) : ViewModel() {
             null
         }
     }
+    private fun createInputDataFromUri() = Data.Builder().apply {
+            imageUri?.let {
+                putString(KEY_IMAGE_URI,imageUri.toString())
+            }
+        }.build()
 
     private fun getImageUri(context: Context): Uri {
         val resources = context.resources
