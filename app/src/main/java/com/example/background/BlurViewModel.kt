@@ -43,7 +43,8 @@ class BlurViewModel(application: Application) : ViewModel() {
      * @param blurLevel The amount to blur the image
      */
     internal fun applyBlur(blurLevel: Int) {
-        workManager.enqueue(OneTimeWorkRequest.from(BlurWorker::class.java))
+        val blurRequest = OneTimeWorkRequestBuilder<BlurWorker>().setInputData(createInputDataFromUri()).build()
+        workManager.enqueue(blurRequest)
     }
     private fun uriOrNull(uriString: String?): Uri? {
         return if (!uriString.isNullOrEmpty()) {

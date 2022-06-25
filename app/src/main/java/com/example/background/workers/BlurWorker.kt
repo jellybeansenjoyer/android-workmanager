@@ -2,11 +2,15 @@ package com.example.background.workers
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.example.background.KEY_IMAGE_URI
 import com.example.background.R
 import java.lang.Exception
+import java.lang.IllegalArgumentException
+
 private const val TAG=".BlurWorker"
 class BlurWorker(private val context: Context,
                    private val params:WorkerParameters): Worker(context,params) {
@@ -14,7 +18,14 @@ class BlurWorker(private val context: Context,
         val context = context.applicationContext
         makeStatusNotification("Blurring Image...",context)
         try{
-            val picture = BitmapFactory.decodeResource(context.resources, R.drawable.android_cupcake)
+
+            val resourceUri = inputData.getString(KEY_IMAGE_URI)
+            if(resourceUri!!.isEmpty()){
+                throw IllegalArgumentException("Empty data")
+            }
+            val cr = context.contentResolver
+
+            val picture = BitmapFactory.decodeStream(cr.openInputStream(Uri.parse(resourceUri)))
             val output = blurBitmap(picture,context.applicationContext)
             val uri = writeBitmapToFile(context,output)
 
