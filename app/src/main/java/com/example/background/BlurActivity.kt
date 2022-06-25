@@ -28,7 +28,6 @@ class BlurActivity : AppCompatActivity() {
         BlurViewModel.BlurViewModelFactory(
             application
         )
-
     }
     private lateinit var binding: ActivityBlurBinding
 
