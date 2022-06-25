@@ -20,7 +20,6 @@ class BlurWorker(private val context: Context,
         makeStatusNotification("Blurring Image...",context)
         sleep()
         try{
-
             val resourceUri = inputData.getString(KEY_IMAGE_URI)
             if(resourceUri!!.isEmpty()){
                 throw IllegalArgumentException("Empty data")

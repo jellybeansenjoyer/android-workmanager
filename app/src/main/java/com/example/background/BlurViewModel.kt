@@ -21,6 +21,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.view.Gravity.apply
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.*
@@ -33,9 +34,11 @@ class BlurViewModel(application: Application) : ViewModel() {
 
     internal var imageUri: Uri? = null
     internal var outputUri: Uri? = null
+    var workStat: LiveData<List<WorkInfo>>
     val workManager:WorkManager = WorkManager.getInstance(application.applicationContext)
     init {
         imageUri = getImageUri(application.applicationContext)
+        workStat = workManager.getWorkInfosByTagLiveData(TAG_OUTPUT)
     }
     /**
      * Create the WorkRequest to apply the blur and save the resulting image
@@ -46,7 +49,7 @@ class BlurViewModel(application: Application) : ViewModel() {
             ExistingWorkPolicy.REPLACE,
             OneTimeWorkRequest.from(CleanUpWorker::class.java))
         val workRequest = OneTimeWorkRequestBuilder<BlurWorker>().setInputData(createInputDataFromUri()).build()
-        val save = OneTimeWorkRequest.Builder(SavingWorker::class.java).build()
+        val save = OneTimeWorkRequest.Builder(SavingWorker::class.java).addTag(TAG_OUTPUT).build()
         continuation.then(workRequest).then(save).enqueue()
     }
     private fun uriOrNull(uriString: String?): Uri? {
@@ -61,6 +64,10 @@ class BlurViewModel(application: Application) : ViewModel() {
                 putString(KEY_IMAGE_URI,imageUri.toString())
             }
         }.build()
+
+    fun cancelWork(){
+        workManager.cancelUniqueWork(IMAGE_MANIPULATION_WORK_NAME)
+    }
 
     private fun getImageUri(context: Context): Uri {
         val resources = context.resources
