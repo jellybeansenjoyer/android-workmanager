@@ -18,6 +18,7 @@ class BlurWorker(private val context: Context,
     override fun doWork(): Result {
         val context = context.applicationContext
         makeStatusNotification("Blurring Image...",context)
+        sleep()
         try{
 
             val resourceUri = inputData.getString(KEY_IMAGE_URI)
@@ -38,5 +39,4 @@ class BlurWorker(private val context: Context,
             return Result.failure()
         }
     }
-
 }
